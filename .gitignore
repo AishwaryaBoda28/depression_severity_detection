@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+
+# ML model files (VERY IMPORTANT)
+*.pt
+*.pth
+
+# dataset
+*.csv
+
+# cache
+*.cache

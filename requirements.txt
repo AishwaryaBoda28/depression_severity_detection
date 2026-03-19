@@ -1,0 +1,15 @@
+streamlit
+torch
+transformers
+sentencepiece
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+lime
+shap
+emoji
+accelerate
+tqdm
+datasets

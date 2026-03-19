@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depression Detection System</title>
+<style>
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  padding: 40px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 26px;
+  margin-bottom: 40px;
+  color: #222;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.input-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.panel {
+  flex: 1;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+}
+
+textarea {
+  width: 100%;
+  height: 120px;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  margin-bottom: 12px;
+}
+
+input[type="file"] {
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+button {
+  padding: 10px 28px;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+.result {
+  background: #f0f4ff;
+  border: 1px solid #c0d0ff;
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.result h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.result .severity {
+  font-size: 18px;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+.result .translated {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+}
+
+.severity-bar-wrap {
+  margin: 12px auto;
+  width: 80%;
+}
+
+.severity-bar-bg {
+  background: #e0e0e0;
+  border-radius: 20px;
+  height: 18px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.severity-bar-fill {
+  height: 18px;
+  border-radius: 20px;
+  transition: width 0.4s ease;
+}
+
+.severity-label {
+  font-size: 13px;
+  color: #777;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 8px;
+}
+.badge-0 { background: #d4edda; color: #155724; }
+.badge-1 { background: #fff3cd; color: #856404; }
+.badge-2 { background: #ffe5b4; color: #a05000; }
+.badge-3 { background: #f8d7da; color: #721c24; }
+
+.bar-0 { background: #27ae60; }
+.bar-1 { background: #f0a500; }
+.bar-2 { background: #e67e22; }
+.bar-3 { background: #c0392b; }
+
+.explanation {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.explanation p.legend {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.explanation img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.explanation-shap {
+  background: #f0f8ff;
+  border: 1px solid #b8d4f0;
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.explanation-shap p.legend {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.explanation-shap img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.lime-iframe {
+  width: 100%;
+  height: 500px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.open-link {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 20px;
+  background: #007bff;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.open-link:hover {
+  background: #0056b3;
+}
+
+.error-box {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  padding: 16px;
+  color: #856404;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <h1>Depression Detection System</h1>
+
+  <!-- INPUT PANELS -->
+  <div class="input-row">
+
+    <div class="panel">
+      <h2>Text Analysis</h2>
+      <form method="POST">
+        <textarea name="text" placeholder="Enter text here... (any language)"></textarea>
+        <br>
+        <button type="submit">Analyze Text</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Image Analysis</h2>
+      <p style="font-size:13px; color:#666; margin-bottom:10px;">
+        Use a clear facial photo for best results
+      </p>
+      <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*">
+        <br>
+        <button type="submit">Analyze Image</button>
+      </form>
+    </div>
+
+  </div>
+
+
+  <!-- ERROR MESSAGE -->
+  {% if image_error %}
+  <div class="error-box">
+    ⚠️ {{ image_error }}
+  </div>
+  {% endif %}
+
+
+  <!-- RESULT -->
+  {% if prediction %}
+
+  {% set badge_map = {
+    "Not Depressed": "badge-0",
+    "Mild":          "badge-1",
+    "Moderate":      "badge-2",
+    "Severe":        "badge-3"
+  } %}
+
+  {% set bar_map = {
+    "Not Depressed": "bar-0",
+    "Mild":          "bar-1",
+    "Moderate":      "bar-2",
+    "Severe":        "bar-3"
+  } %}
+
+  <div class="result">
+
+    <h3>Prediction:
+      <span class="badge {{ badge_map[prediction] }}">{{ prediction }}</span>
+    </h3>
+
+    {% if severity is not none %}
+    <p class="severity">Severity Score: <strong>{{ severity }} / 5</strong></p>
+
+    <div class="severity-bar-wrap">
+      <div class="severity-bar-bg">
+        <div class="severity-bar-fill {{ bar_map[prediction] }}"
+             style="width: {{ (severity / 5 * 100) | round(1) }}%;">
+        </div>
+      </div>
+      <div class="severity-label">{{ (severity / 5 * 100) | round(1) }}%</div>
+    </div>
+    {% endif %}
+
+    {% if translated %}
+    <p class="translated">Analyzed text: <em>{{ translated }}</em></p>
+    {% endif %}
+
+  </div>
+
+  {% endif %}
+
+
+  <!-- WORD IMPORTANCE BAR CHART -->
+  {% if has_lime_text %}
+  <div class="explanation">
+    <h3>Word Importance Explanation</h3>
+    <p class="legend">
+      🟢 Green = word increases severity prediction &nbsp;|&nbsp;
+      🔴 Red = word decreases severity prediction
+    </p>
+    <img src="{{ url_for('static', filename='lime_text.png') }}">
+  </div>
+  {% endif %}
+
+
+  <!-- SHAP TEXT EXPLANATION -->
+  {% if has_shap_text %}
+  <div class="explanation-shap">
+    <h3>SHAP Word Importance Explanation</h3>
+    <p class="legend">
+      🟢 Green = word pushes prediction toward <strong>{{ prediction }}</strong> &nbsp;|&nbsp;
+      🔴 Red = word pushes prediction away from <strong>{{ prediction }}</strong>
+      <br>
+      SHAP values show each word's <em>marginal contribution</em> to the predicted class probability.
+    </p>
+    <img src="{{ url_for('static', filename='shap_text.png') }}">
+  </div>
+  {% endif %}
+
+
+  <!-- INTERACTIVE LIME HTML -->
+  {% if has_lime_html %}
+  <div class="explanation">
+    <h3>Interactive LIME Explanation</h3>
+    <p class="legend">
+      Words highlighted in <strong style="color:green;">green</strong>
+      support the prediction &nbsp;|&nbsp;
+      Words highlighted in <strong style="color:red;">red</strong>
+      oppose the prediction
+    </p>
+
+    <iframe
+      src="{{ url_for('static', filename='lime_text.html') }}"
+      class="lime-iframe">
+    </iframe>
+
+    <br>
+    <a href="{{ url_for('static', filename='lime_text.html') }}"
+       target="_blank"
+       class="open-link">
+      🔍 Open Full Interactive View
+    </a>
+
+  </div>
+  {% endif %}
+
+
+  <!-- EMOTION GRAPH (IMAGE) -->
+  {% if has_lime_image %}
+  <div class="explanation">
+    <h3>Facial Emotion Analysis</h3>
+    <p class="legend">
+      Detected emotions from facial expression mapped to depression severity.
+    </p>
+    <img src="{{ url_for('static', filename='lime_image.png') }}">
+  </div>
+  {% endif %}
+
+
+</div>
+
+</body>
+</html>
